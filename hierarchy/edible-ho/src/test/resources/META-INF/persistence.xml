@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="1.0" xmlns="http://java.sun.com/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd">
+
+    <persistence-unit name="test" transaction-type="RESOURCE_LOCAL">
+        <provider>
+            org.apache.openjpa.persistence.PersistenceProviderImpl
+        </provider>
+
+        <!-- We must enumerate each entity in the persistence unit -->
+        <class>com.ericsson.edible.fasttrack.object.HNode</class>
+
+        <properties>
+            <property name="openjpa.ConnectionURL"
+                      value="jdbc:mysql://127.0.0.1:3306/adb"/>
+            <property name="openjpa.ConnectionDriverName"
+                      value="com.mysql.jdbc.Driver"/>
+            <property name="openjpa.ConnectionUserName"
+                      value="root"/>
+            <property name="openjpa.ConnectionPassword"
+                      value="system"/>
+            <property name="openjpa.jdbc.SynchronizeMappings"
+                      value="buildSchema(SchemaAction='dropDB,add')"/>
+             <property name="openjpa.Log" value="SQL=WARN"/>
+            <!-- NDB
+            <property name="openjpa.BrokerFactory" value="ndb"/>
+            <property name="openjpa.ndb.connectString" value="localhost:1186"/>
+            <property name="openjpa.ndb.database" value="test"/>
+            -->
+
+        </properties>
+    </persistence-unit>
+
+</persistence>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="1.0" xmlns="http://java.sun.com/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd">
+    <!--persistence-unit name="keyservice" transaction-type="JTA">
+        <provider>oracle.toplink.essentials.ejb.cmp3.EntityManagerFactoryProvider</provider>
+        <jta-data-source>jdbc/CIS</jta-data-source>
+        <properties>
+            <property name="toplink.target-database" value="MySQL4"/>
+            <property name="toplink.cache.shared.KeyedObject" value="false"/>
+            <property name="toplink.ddl-generation" value="drop-and-create-tables"/>
+        </properties>
+    </persistence-unit-->
+
+     <persistence-unit name="keyservice" transaction-type="JTA">
+        <provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
+        <jta-data-source>jdbc/prototype</jta-data-source>
+         <class>com.ericsson.edible.fasttrack.object.HNode</class>
+        <properties>
+            <property name="openjpa.Log" value="SQL=INFO"/>
+            <property name="openjpa.jdbc.SynchronizeMappings"
+            value="buildSchema(SchemaAction='add')"/>
+            <property name="openjpa.jdbc.DBDictionary" value="mysql(DriverVendor=mysql)" />
+
+        </properties>
+    </persistence-unit>
+
+    
+
+</persistence>
