@@ -23,6 +23,7 @@
             <property name="openjpa.jdbc.SynchronizeMappings"
                       value="buildSchema(SchemaAction='dropDB,add')"/>
              <property name="openjpa.Log" value="SQL=WARN"/>
+            <property name="openjpa.jdbc.DBDictionary" value="mysql" />
             <!-- NDB
             <property name="openjpa.BrokerFactory" value="ndb"/>
             <property name="openjpa.ndb.connectString" value="localhost:1186"/>

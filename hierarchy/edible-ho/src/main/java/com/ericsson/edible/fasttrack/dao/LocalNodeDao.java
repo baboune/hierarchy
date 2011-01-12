@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (c) Ericsson AB, 2009.
+ * Copyright (c) Ericsson AB, 2010.
  *
  * All Rights Reserved. Reproduction in whole or in part is prohibited
  * without the written consent of the copyright owner.
@@ -12,8 +12,9 @@
  * ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF USING, MODIFYING OR
  * DISTRIBUTING THIS SOFTWARE OR ITS DERIVATIVES.
  *
- * User: lmcnise
- * Date: 2010-mar-09
+ * User: Baboune
+ * Date: 2010-dec-25
+ * Time: 23:12:48
  */
 package com.ericsson.edible.fasttrack.dao;
 
