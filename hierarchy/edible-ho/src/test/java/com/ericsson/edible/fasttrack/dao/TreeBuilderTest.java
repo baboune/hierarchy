@@ -41,7 +41,6 @@ public class TreeBuilderTest {
 
         tb.addChildren(tb.getHead(), names);
 
-        tb.persist();
 
     }
 }

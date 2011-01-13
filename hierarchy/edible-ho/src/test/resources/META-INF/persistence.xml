@@ -22,7 +22,7 @@
                       value="system"/>
             <property name="openjpa.jdbc.SynchronizeMappings"
                       value="buildSchema(SchemaAction='dropDB,add')"/>
-             <property name="openjpa.Log" value="SQL=WARN"/>
+             <property name="openjpa.Log" value="DefaultLevel=WARN, Runtime=INFO, Tool=INFO, SQL=TRACE"/>
             <property name="openjpa.jdbc.DBDictionary" value="mysql" />
             <!-- NDB
             <property name="openjpa.BrokerFactory" value="ndb"/>

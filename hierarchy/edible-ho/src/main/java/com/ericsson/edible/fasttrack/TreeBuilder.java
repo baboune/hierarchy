@@ -32,7 +32,6 @@ public class TreeBuilder {
         head = new HNode();
         head.level = 0;
         head.name = name;
-        head.parentId = null;
     }
 
     public TreeBuilder(HNode head){
@@ -54,7 +53,10 @@ public class TreeBuilder {
         return this;
     }
 
-    public void persist() {
-        //To change body of created methods use File | Settings | File Templates.
+    @Override
+    public String toString() {
+        return "TreeBuilder{" +
+                "head=" + head +
+                '}';
     }
 }

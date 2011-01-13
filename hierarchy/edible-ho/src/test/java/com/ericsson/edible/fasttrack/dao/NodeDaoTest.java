@@ -17,14 +17,18 @@
  */
 package com.ericsson.edible.fasttrack.dao;
 
+import com.ericsson.edible.fasttrack.TreeBuilder;
 import com.ericsson.edible.fasttrack.object.HNode;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertNotNull;
 
 import java.lang.reflect.Field;
+import java.util.LinkedList;
+import java.util.List;
 
 import test.utils.EmBindingBase;
 
@@ -64,21 +68,19 @@ public class NodeDaoTest extends EmBindingBase {
         commitTx();
         assertEquals("head", no.name);
 
-        assertNull(no.parentId);
+        assertNull(no.parent);
 
         getEntityManager().clear();
 
-        Long id = no.id;
-
         HNode ln = new HNode();
         ln.name = "lchild";
-        ln.parentId = id;
-        ln.level = no.level +1;
+        ln.parent = no;
+        ln.level = no.level + 1;
 
         HNode rn = new HNode();
         rn.name = "rchild";
-        rn.parentId = id;
-        rn.level = no.level +1;
+        rn.parent = no;
+        rn.level = no.level + 1;
 
         beginTx();
         dao.create(ln);
@@ -87,8 +89,31 @@ public class NodeDaoTest extends EmBindingBase {
         commitTx();
 
         getEntityManager().clear();
+    }
 
+    @Test
+    public void testTB() throws Exception {
+        TreeBuilder tb = new TreeBuilder("mine");
 
+        List<String> names = new LinkedList<String>();
+        names.add("11");
+        names.add("12");
+        names.add("13");
+
+        tb.addChildren(tb.getHead(), names);
+
+        System.out.println(tb);
+
+        beginTx();
+        dao.persist(tb);
+        commitTx();
+
+        HNode head = dao.getParentNode();
+        assertNotNull(head);
+
+        List<HNode> children = dao.getChildNodes(head.id);
+        assertNotNull(children);
+        assertEquals(3, children.size());
     }
 
 

@@ -18,6 +18,7 @@
  */
 package com.ericsson.edible.fasttrack;
 
+import com.ericsson.edible.fasttrack.exception.InvalidTreeException;
 import com.ericsson.edible.fasttrack.object.HNode;
 
 import java.util.List;
@@ -26,6 +27,10 @@ import java.util.List;
  *
  */
 public interface H {
+
+    public HNode persist(TreeBuilder tb) throws InvalidTreeException;
+
+
     /**
      * The parent of this node. All nodes, except <code>Attr</code>,
      * <code>Document</code>, <code>DocumentFragment</code>,
@@ -41,7 +46,7 @@ public interface H {
      * there are no children, this is a <code>NodeList</code> containing no
      * nodes.
      */
-    public List<HNode> getChildNodes();
+    public List<HNode> getChildNodes(Long id);
 
     /**
      * The first child of this node. If there is no such node, this returns

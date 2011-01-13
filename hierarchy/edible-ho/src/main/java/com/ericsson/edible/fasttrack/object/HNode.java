@@ -18,6 +18,8 @@
  */
 package com.ericsson.edible.fasttrack.object;
 
+import org.apache.openjpa.persistence.jdbc.Index;
+
 import javax.persistence.*;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,15 +37,36 @@ public class HNode {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     public Long id = null;
-
     public String name = null;
-    public Long parentId = null;
-    @Column(name  = "LVL")
+    @Column(name = "LVL")
     public Integer level = null;
+
+    @ManyToOne()
+    @JoinColumn(name = "PARENT_ID")
+    @Index
+    public HNode parent;
 
     @Transient
     public List<HNode> children = new LinkedList<HNode>();
-    @Transient
-    public HNode parent;
 
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder(200);
+        builder.append("HNode{");
+
+        String s = "id=" + id +
+                ", name='" + name + '\'' +
+                ", level=" + level + ", parent=";
+
+        builder.append(s);
+
+        if (parent != null) {
+            builder.append(parent.id);
+        } else {
+            builder.append("null");
+        }
+        s = ", children=" + children + '}';
+        builder.append(s);
+        return builder.toString();
+    }
 }
