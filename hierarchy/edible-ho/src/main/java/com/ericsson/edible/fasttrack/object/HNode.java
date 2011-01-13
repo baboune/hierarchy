@@ -19,6 +19,8 @@
 package com.ericsson.edible.fasttrack.object;
 
 import javax.persistence.*;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -38,4 +40,10 @@ public class HNode {
     public Long parentId = null;
     @Column(name  = "LVL")
     public Integer level = null;
+
+    @Transient
+    public List<HNode> children = new LinkedList<HNode>();
+    @Transient
+    public HNode parent;
+
 }
