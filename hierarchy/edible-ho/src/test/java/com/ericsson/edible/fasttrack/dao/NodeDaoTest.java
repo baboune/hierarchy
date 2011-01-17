@@ -102,6 +102,15 @@ public class NodeDaoTest extends EmBindingBase {
 
         tb.addChildren(tb.getHead(), names);
 
+        names.clear();
+        int i = 1;
+        for(HNode lvl : tb.getHead().children) {
+            names.add("21-" + i);
+            names.add("22-" + i);
+            tb.addChildren(lvl, names);
+            i++;
+        }
+
         System.out.println(tb);
 
         beginTx();
@@ -114,6 +123,10 @@ public class NodeDaoTest extends EmBindingBase {
         List<HNode> children = dao.getChildNodes(head.id);
         assertNotNull(children);
         assertEquals(3, children.size());
+
+        beginTx();
+        dao.delete(5L);
+        commitTx();
     }
 
 

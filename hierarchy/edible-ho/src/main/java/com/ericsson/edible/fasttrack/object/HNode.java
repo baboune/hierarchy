@@ -35,11 +35,12 @@ import java.util.List;
 @Table(name = "EDB_NODE")
 public class HNode {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id = null;
     public String name = null;
     @Column(name = "LVL")
     public Integer level = null;
+    public String lineage = "";
 
     @ManyToOne()
     @JoinColumn(name = "PARENT_ID")

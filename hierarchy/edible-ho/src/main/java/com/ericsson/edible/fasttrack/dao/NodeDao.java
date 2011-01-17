@@ -48,8 +48,6 @@ public class NodeDao implements LocalNodeDao, H {
 
     public HNode create(HNode ko) {
         em.persist(ko);
-        // TODO: Probably remove -> right now guarantees an id...
-        em.flush();
         return ko;
     }
 
@@ -70,6 +68,16 @@ public class NodeDao implements LocalNodeDao, H {
                 LOG.fine("Removing mapping for: " + id);
             }
             em.remove(ko);
+            // remove all children
+            // SELECT * FROM edb_node where parent_id = 1 OR lineage LIKE ('/1/%');
+            String lineage = ko.lineage + '/' + id;
+            Query q = em.createQuery("DELETE from HNode h  WHERE h.parent.id =:deadNode " +
+                    "OR h.lineage LIKE :lineage");
+            q.setParameter("deadNode", id);
+            System.out.println("lineage to del:" + ko.lineage + '/' + id + "/%");
+            q.setParameter("lineage", ko.lineage + '/' + id + "/%");
+            int nb = q.executeUpdate();
+            System.out.println("Removed " + nb + " nodes");
         }
     }
 
@@ -81,11 +89,7 @@ public class NodeDao implements LocalNodeDao, H {
         }
         if (head.parent == null) {
             head = create(head);
-            // Build a new tree
-            for (HNode h : head.children) {
-                h.parent = head;
-                create(h);
-            }
+            createLevel(head);
             return head;
         } else if (head.parent != null && head.parent.id != null) {
             HNode parent = get(head.parent.id);
@@ -133,4 +137,23 @@ public class NodeDao implements LocalNodeDao, H {
     public HNode getNextSibling() {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
+
+    private void createLevel(HNode head) {
+        // get the id of the new head
+        if (head.id == null) {
+            em.flush();
+        }
+        // Build a new tree
+        for (HNode h : head.children) {
+            h.parent = head;
+            h.lineage = head.lineage + '/' + head.id;
+            h.level = head.level + 1;
+            create(h);
+            if (h.children != null && h.children.size() > 0) {
+                createLevel(h);
+            }
+        }
+
+    }
+
 }

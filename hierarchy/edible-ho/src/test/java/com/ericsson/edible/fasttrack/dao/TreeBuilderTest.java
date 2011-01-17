@@ -41,6 +41,12 @@ public class TreeBuilderTest {
 
         tb.addChildren(tb.getHead(), names);
 
+        names.clear();
+        for(HNode lvl : tb.getHead().children) {
+            names.add("21" + lvl.id);
+            names.add("22" + lvl.id);
+        }
+
 
     }
 }
