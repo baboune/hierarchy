@@ -14,7 +14,7 @@
  *
  * User: Baboune
  * Date: 2010-dec-25
- * Time: 23:12:48
+ * Time: 13:19:04
  */
 package com.ericsson.edible.fasttrack.object;
 
@@ -25,11 +25,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Baboune
- * Date: 2010-dec-25
- * Time: 13:19:04
- * To change this template use File | Settings | File Templates.
+ *
  */
 @Entity
 @Table(name = "EDB_NODE")
@@ -37,9 +33,11 @@ public class HNode {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id = null;
+    @Index
     public String name = null;
     @Column(name = "LVL")
     public Integer level = null;
+    @Index
     public String lineage = "";
 
     @ManyToOne()
@@ -69,5 +67,35 @@ public class HNode {
         s = ", children=" + children + '}';
         builder.append(s);
         return builder.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        HNode hNode = (HNode) o;
+
+        if (level != null ? !level.equals(hNode.level) : hNode.level != null) return false;
+        if (lineage != null ? !lineage.equals(hNode.lineage) : hNode.lineage != null) return false;
+        if (name != null ? !name.equals(hNode.name) : hNode.name != null) return false;
+
+        // compare parent id
+        if (parent != null) {
+            if (parent.id != null ? !parent.id.equals(hNode.parent.id) : hNode.parent.id != null) return false;
+        } else {
+            // otherwise return true if both are null
+            return hNode.parent == null;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (level != null ? level.hashCode() : 0);
+        result = 31 * result + (lineage != null ? lineage.hashCode() : 0);
+        result = 31 * result + (parent != null ? parent.id.hashCode() : 0);
+        return result;
     }
 }

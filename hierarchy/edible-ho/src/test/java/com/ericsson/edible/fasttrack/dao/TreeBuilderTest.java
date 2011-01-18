@@ -31,22 +31,33 @@ import java.util.List;
 public class TreeBuilderTest {
 
     @Test
-    public void testBuild() {
+    public void dummy() {
+        System.out.println("dummy");
+    }
+
+    public static TreeBuilder setup() {
         TreeBuilder tb = new TreeBuilder("mine");
 
         List<String> names = new LinkedList<String>();
+        /* for(int i = 0; i< 3; i++) {
+            for(int j = 0; j < 3; j++){
+                names.add(String.valueOf(i) + j);
+            }
+        }*/
         names.add("11");
         names.add("12");
         names.add("13");
 
         tb.addChildren(tb.getHead(), names);
 
-        names.clear();
-        for(HNode lvl : tb.getHead().children) {
-            names.add("21" + lvl.id);
-            names.add("22" + lvl.id);
+
+        for (HNode lvl : tb.getHead().children) {
+            names.clear();
+            names.add(lvl.name + "1");
+            names.add(lvl.name + "2");
+            tb.addChildren(lvl, names);
         }
 
-
+        return tb;
     }
 }

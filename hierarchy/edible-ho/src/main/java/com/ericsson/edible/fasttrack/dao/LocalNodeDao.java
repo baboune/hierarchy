@@ -18,6 +18,7 @@
  */
 package com.ericsson.edible.fasttrack.dao;
 
+import com.ericsson.edible.fasttrack.exception.InvalidTreeException;
 import com.ericsson.edible.fasttrack.object.HNode;
 
 
@@ -26,7 +27,7 @@ import com.ericsson.edible.fasttrack.object.HNode;
  */
 public interface LocalNodeDao {
 
-    HNode create(HNode t);
+    HNode create(HNode t) throws InvalidTreeException;
 
     HNode get(Long id);
 

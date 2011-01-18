@@ -25,9 +25,9 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Field;
-import java.util.LinkedList;
 import java.util.List;
 
 import test.utils.EmBindingBase;
@@ -57,7 +57,7 @@ public class NodeDaoTest extends EmBindingBase {
     }
 
     @Test
-    public void test1() {
+    public void test1() throws Exception {
         HNode n = new HNode();
         n.name = "head";
         n.level = 0;
@@ -93,40 +93,77 @@ public class NodeDaoTest extends EmBindingBase {
 
     @Test
     public void testTB() throws Exception {
-        TreeBuilder tb = new TreeBuilder("mine");
-
-        List<String> names = new LinkedList<String>();
-        names.add("11");
-        names.add("12");
-        names.add("13");
-
-        tb.addChildren(tb.getHead(), names);
-
-        names.clear();
-        int i = 1;
-        for(HNode lvl : tb.getHead().children) {
-            names.add("21-" + i);
-            names.add("22-" + i);
-            tb.addChildren(lvl, names);
-            i++;
-        }
-
-        System.out.println(tb);
+        TreeBuilder tb = TreeBuilderTest.setup();
 
         beginTx();
         dao.persist(tb);
         commitTx();
 
+        // clean em
+        getEntityManager().clear();
+
         HNode head = dao.getParentNode();
         assertNotNull(head);
 
-        List<HNode> children = dao.getChildNodes(head.id);
+        List<HNode> children = dao.getChildren(head.id);
         assertNotNull(children);
         assertEquals(3, children.size());
+
+        List<HNode> grandChildren = null;
+        for (HNode child : children) {
+            assertEquals(0, child.children.size());
+            grandChildren = dao.getChildren(child.id);
+            assertEquals(2, grandChildren.size());
+        }
+
+        // clean em
+        getEntityManager().clear();
 
         beginTx();
         dao.delete(5L);
         commitTx();
+    }
+
+    @Test
+    public void testMoveSubtree() throws Exception {
+        TreeBuilder tb = TreeBuilderTest.setup();
+
+        beginTx();
+        dao.persist(tb);
+        commitTx();
+
+        // clean em
+        getEntityManager().clear();
+
+        List<HNode> nodes = dao.findNodeByName("12");
+        // for the test there can be only one
+        assertEquals(1, nodes.size());
+
+        List<HNode> nodesToMoveTo = dao.findNodeByName("11");
+        // for the test there can be only one
+        assertEquals(1, nodesToMoveTo.size());
+
+        // move 12 to 11
+        long idToMove = nodes.get(0).id;
+        HNode nodeToMove = nodes.get(0);
+        long newParentId = nodesToMoveTo.get(0).id;
+
+        beginTx();
+        dao.moveSubTree(idToMove, newParentId);
+        commitTx();
+
+        // clean em
+        getEntityManager().clear();
+
+        nodes = dao.getChildren(newParentId);
+        boolean found = false;
+        for(HNode child: nodes) {
+            if("12".equals(child.name)){
+                found = true;
+            }
+
+        }
+        assertTrue(found);
     }
 
 

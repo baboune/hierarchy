@@ -28,47 +28,75 @@ import java.util.List;
  */
 public interface H {
 
-    public HNode persist(TreeBuilder tb) throws InvalidTreeException;
+    HNode persist(TreeBuilder tb) throws InvalidTreeException;
+
+    /**
+     * Convenient method to locate a node based on a name.  Note that the node name is not unique (should it be?)
+     * so this can return multiple nodes.
+     *
+     * @param name A {@link String}.
+     * @return A list of {@link HNode} nodes that share this name.
+     */
+    List<HNode> findNodeByName(String name);
 
 
     /**
-     * The parent of this node. All nodes, except <code>Attr</code>,
-     * <code>Document</code>, <code>DocumentFragment</code>,
-     * <code>Entity</code>, and <code>Notation</code> may have a parent.
+     * The absolute parent of the hierarchy. All nodes have a parent.
+     *
+     * @return The {@link HNode}.
+     */
+    HNode getParentNode();
+
+    /**
+     * The parent of this node as specified by the id. All nodes.
      * However, if a node has just been created and not yet added to the
      * tree, or if it has been removed from the tree, this is
      * <code>null</code>.
+     *
+     * @return The {@link HNode}.
      */
-    public HNode getParentNode();
+    HNode getParentNode(Long id);
 
     /**
      * A <code>NodeList</code> that contains all children of this node. If
      * there are no children, this is a <code>NodeList</code> containing no
      * nodes.
      */
-    public List<HNode> getChildNodes(Long id);
+    List<HNode> getChildren(Long id);
 
     /**
      * The first child of this node. If there is no such node, this returns
      * <code>null</code>.
      */
-    public HNode getFirstChild();
+    HNode getFirstChild();
 
     /**
      * The last child of this node. If there is no such node, this returns
      * <code>null</code>.
      */
-    public HNode getLastChild();
+    HNode getLastChild();
 
     /**
      * The node immediately preceding this node. If there is no such node,
      * this returns <code>null</code>.
      */
-    public HNode getPreviousSibling();
+    HNode getPreviousSibling();
 
     /**
      * The node immediately following this node. If there is no such node,
      * this returns <code>null</code>.
      */
-    public HNode getNextSibling();
+    HNode getNextSibling();
+
+    /**
+     * Higher level API from provisioning probably.
+     * <p/>
+     * Used for createUser(parentId, User) for example.
+     * Used for createDepartment(parentId, Department) for example.
+     *
+     * @param id
+     * @param o
+     */
+    public void create(HNode id, Object o);
+
 }

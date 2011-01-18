@@ -46,7 +46,15 @@ public class NodeDao implements LocalNodeDao, H {
     @PersistenceContext(unitName = "nodeservice")
     private EntityManager em = null;
 
-    public HNode create(HNode ko) {
+    public HNode create(HNode ko) throws InvalidTreeException {
+        if (ko.parent == null) {
+            ko.lineage = "/";
+            // check if there is already a top parent node
+            Number nb = (Number) em.createQuery("SELECT COUNT(h) FROM HNode h WHERE h.parent IS NULL").getSingleResult();
+            if (nb.intValue() > 0) {
+                throw new InvalidTreeException("dual heads are not supported");
+            }
+        }
         em.persist(ko);
         return ko;
     }
@@ -70,14 +78,21 @@ public class NodeDao implements LocalNodeDao, H {
             em.remove(ko);
             // remove all children
             // SELECT * FROM edb_node where parent_id = 1 OR lineage LIKE ('/1/%');
-            String lineage = ko.lineage + '/' + id;
-            Query q = em.createQuery("DELETE from HNode h  WHERE h.parent.id =:deadNode " +
-                    "OR h.lineage LIKE :lineage");
-            q.setParameter("deadNode", id);
-            System.out.println("lineage to del:" + ko.lineage + '/' + id + "/%");
-            q.setParameter("lineage", ko.lineage + '/' + id + "/%");
-            int nb = q.executeUpdate();
-            System.out.println("Removed " + nb + " nodes");
+
+            if (ko.lineage == null || ko.lineage.length() <= 1) {
+                deleteAll();
+            } else {
+                String lineage = ko.lineage + '/' + id + "/%";
+
+
+                Query q = em.createQuery("DELETE FROM HNode h  WHERE h.parent.id = :deadNode " +
+                        "OR h.lineage LIKE :lineage");
+                q.setParameter("deadNode", id);
+                System.out.println("lineage to del:" + lineage);
+                q.setParameter("lineage", lineage);
+                int nb = q.executeUpdate();
+                System.out.println("Removed " + nb + " nodes");
+            }
         }
     }
 
@@ -102,6 +117,17 @@ public class NodeDao implements LocalNodeDao, H {
         return null;
     }
 
+    public void moveSubTree(Long subTreeHeadId, Long newParentId) {
+        HNode what = em.find(HNode.class, subTreeHeadId);
+        HNode where = em.find(HNode.class, newParentId);
+
+        what.parent = where;
+        what.lineage = where.lineage + '/' + where.id;
+        what.level = where.level + 1;
+
+        // edit the rest of the children
+        rebuildLineage(what);
+    }
 
     @Override
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
@@ -109,14 +135,37 @@ public class NodeDao implements LocalNodeDao, H {
         return (HNode) em.createQuery("SELECT n FROM HNode n WHERE n.parent IS NULL").getSingleResult();
     }
 
+
+    @Override
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    public HNode getParentNode(final Long id) {
+        if (id == null) {
+            return getParentNode();
+        } else {
+            return (HNode) em.createQuery("SELECT n FROM HNode n WHERE n.parent = :id")
+                    .setParameter("id", id).getSingleResult();
+        }
+    }
+
     @Override
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     @SuppressWarnings("unchecked")
-    public List<HNode> getChildNodes(final Long id) {
+    public List<HNode> findNodeByName(String name) {
+        Query q = em.createQuery("SELECT h FROM HNode h WHERE h.name = :name");
+        q.setParameter("name", name);
+        return q.getResultList();
+
+    }
+
+    @Override
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    @SuppressWarnings("unchecked")
+    public List<HNode> getChildren(final Long id) {
         Query q = em.createQuery("SELECT n FROM HNode n WHERE n.parent.id = :id");
         q.setParameter("id", id);
         return q.getResultList();
     }
+
 
     @Override
     public HNode getFirstChild() {
@@ -138,7 +187,12 @@ public class NodeDao implements LocalNodeDao, H {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    private void createLevel(HNode head) {
+    @Override
+    public void create(HNode id, Object o) {
+        // dummy method used as a reminder of higher level function.
+    }
+
+    private void createLevel(HNode head) throws InvalidTreeException {
         // get the id of the new head
         if (head.id == null) {
             em.flush();
@@ -146,14 +200,48 @@ public class NodeDao implements LocalNodeDao, H {
         // Build a new tree
         for (HNode h : head.children) {
             h.parent = head;
-            h.lineage = head.lineage + '/' + head.id;
+            if ("/".equals(head.lineage)) {
+                h.lineage = "/" + head.id;
+            } else {
+                h.lineage = head.lineage + '/' + head.id;
+            }
             h.level = head.level + 1;
             create(h);
             if (h.children != null && h.children.size() > 0) {
                 createLevel(h);
             }
         }
-
     }
+
+    private void rebuildLineage(HNode head) {
+        // get the id of the new head
+        if (head.id == null) {
+            return;
+        }
+
+        // Build a new tree
+        List<HNode> grandChildren = null;
+        for (HNode h : getChildren(head.id)) {
+            h.lineage = head.lineage + '/' + head.id;
+            h.level = head.level + 1;
+            em.merge(h);
+            grandChildren = getChildren(head.id);
+            if (grandChildren != null && grandChildren.size() > 0) {
+                rebuildLineage(h);
+            }
+        }
+    }
+
+    private int deleteAll() {
+        Query q = em.createQuery("SELECT COUNT(h) FROM HNode h");
+        Number nb = (Number) q.getSingleResult();
+
+        for (int i = 0; i < nb.intValue(); i += 30000) {
+            q = em.createQuery("DELETE FROM HNode h");
+            q.executeUpdate();
+        }
+        return nb.intValue();
+    }
+
 
 }
