@@ -28,10 +28,20 @@ import java.util.List;
  */
 public interface H {
 
-    HNode persist(TreeBuilder tb) throws InvalidTreeException;
+    /**
+     * Creates a tree head.
+     *
+     * @param name The name of the head node.
+     *
+     * @return The persisted head.
+     * @throws InvalidTreeException In case such a head already exists.
+     */
+    public HNode createHead(String name) throws InvalidTreeException;
+
 
     /**
-     * Convenient method to locate a node based on a name.  Note that the node name is not unique (should it be?)
+     * Convenience method to locate a node based on a name.
+     * Note that the node name is not unique (should it be?)
      * so this can return multiple nodes.
      *
      * @param name A {@link String}.
@@ -63,6 +73,8 @@ public interface H {
      * nodes.
      */
     List<HNode> getChildren(Long id);
+
+    List<HNode> getChildren(HNode node);
 
     /**
      * The first child of this node. If there is no such node, this returns
@@ -97,6 +109,6 @@ public interface H {
      * @param id
      * @param o
      */
-    public void create(HNode id, Object o);
+    public void relate(HNode id, Object o);
 
 }

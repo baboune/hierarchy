@@ -32,4 +32,6 @@ public interface LocalNodeDao {
     HNode get(Long id);
 
     void delete(Long id);
+
+
 }

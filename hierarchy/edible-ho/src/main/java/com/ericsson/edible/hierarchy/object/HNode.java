@@ -18,6 +18,7 @@
  */
 package com.ericsson.edible.hierarchy.object;
 
+import com.ericsson.edible.hierarchy.utils.HierarchyHelper;
 import org.apache.openjpa.persistence.jdbc.Index;
 
 import javax.persistence.*;
@@ -36,7 +37,7 @@ public class HNode {
     @Index
     public String name = null;
     @Column(name = "LVL")
-    public Integer level = null;
+    public Integer level = 0;
     @Index
     public String lineage = "";
 
@@ -45,27 +46,34 @@ public class HNode {
     @Index
     public HNode parent;
 
-    @Transient
-    public List<HNode> children = new LinkedList<HNode>();
+    /**
+     * Default constructor. Required by @Entity.
+     */
+    public HNode() {
+    }
+
+    public HNode(final String name, final HNode parent) {
+        this.name = name;
+        this.parent = parent;
+        this.level = parent.level + 1;
+        this.lineage = HierarchyHelper.makeLineage(parent.lineage, parent.id);
+    }
 
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder(200);
-        builder.append("HNode{");
-
-        String s = "id=" + id +
-                ", name='" + name + '\'' +
-                ", level=" + level + ", parent=";
-
-        builder.append(s);
+        builder.append("HNode{")
+                .append("id=").append(id)
+                .append(", name='").append(name)
+                .append("\', level=").append(level)
+                .append(", parent=");
 
         if (parent != null) {
             builder.append(parent.id);
         } else {
             builder.append("null");
         }
-        s = ", children=" + children + '}';
-        builder.append(s);
+        builder.append('}');
         return builder.toString();
     }
 

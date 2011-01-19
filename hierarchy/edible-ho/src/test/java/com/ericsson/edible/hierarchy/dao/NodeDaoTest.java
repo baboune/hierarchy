@@ -17,7 +17,6 @@
  */
 package com.ericsson.edible.hierarchy.dao;
 
-import com.ericsson.edible.hierarchy.TreeBuilder;
 import com.ericsson.edible.hierarchy.object.HNode;
 import org.junit.Before;
 import org.junit.Test;
@@ -57,7 +56,7 @@ public class NodeDaoTest extends EmBindingBase {
     }
 
     @Test
-    public void test1() throws Exception {
+    public void testThreeNodeTree() throws Exception {
         HNode n = new HNode();
         n.name = "head";
         n.level = 0;
@@ -67,9 +66,9 @@ public class NodeDaoTest extends EmBindingBase {
         getEntityManager().flush();
         commitTx();
         assertEquals("head", no.name);
-
         assertNull(no.parent);
 
+        // clean up em
         getEntityManager().clear();
 
         HNode ln = new HNode();
@@ -85,18 +84,39 @@ public class NodeDaoTest extends EmBindingBase {
         beginTx();
         dao.create(ln);
         dao.create(rn);
-        getEntityManager().flush();
         commitTx();
 
+        // clean up em
         getEntityManager().clear();
+
+        // verify tree
+        HNode head = dao.getParentNode();
+        assertNotNull(head);
+
+        List<HNode> children = dao.getChildren(head);
+        assertNotNull(children);
+        assertEquals(2, children.size());
+
+        boolean[] found = new boolean[2];
+        for (HNode h : children) {
+            if ("lchild".equals(h.name)) {
+                found[0] = true;
+            }
+            if ("rchild".equals(h.name)) {
+                found[1] = true;
+            }
+        }
+        assertTrue(found[0]);
+        assertTrue(found[1]);
+
     }
 
     @Test
     public void testTB() throws Exception {
-        TreeBuilder tb = TreeBuilderTest.setup();
+        TreeBuilder tb = new TreeBuilder(getEntityManager(), dao, "testBT");
 
         beginTx();
-        dao.persist(tb);
+        tb.buildBalancedTree(2, 2);
         commitTx();
 
         // clean em
@@ -107,11 +127,10 @@ public class NodeDaoTest extends EmBindingBase {
 
         List<HNode> children = dao.getChildren(head.id);
         assertNotNull(children);
-        assertEquals(3, children.size());
+        assertEquals(2, children.size());
 
         List<HNode> grandChildren = null;
         for (HNode child : children) {
-            assertEquals(0, child.children.size());
             grandChildren = dao.getChildren(child.id);
             assertEquals(2, grandChildren.size());
         }
@@ -119,17 +138,32 @@ public class NodeDaoTest extends EmBindingBase {
         // clean em
         getEntityManager().clear();
 
+        List<HNode> toDeletes = dao.findNodeByName("12");
+        assertNotNull(toDeletes);
+        assertEquals(1, toDeletes.size());
+
         beginTx();
-        dao.delete(5L);
+        dao.delete(toDeletes.get(0).id);
         commitTx();
+
+        // clean em
+        getEntityManager().clear();
+
+        // verify it is not there
+        assertNull(dao.get(toDeletes.get(0).id));
+
+        // check tree
+        children = dao.getChildren(head.id);
+        assertNotNull(children);
+        assertEquals(1, children.size());
     }
 
     @Test
     public void testMoveSubtree() throws Exception {
-        TreeBuilder tb = TreeBuilderTest.setup();
+        TreeBuilder tb = new TreeBuilder(getEntityManager(), dao, "testMoveSubtree");
 
         beginTx();
-        dao.persist(tb);
+        tb.buildBalancedTree(3, 3);
         commitTx();
 
         // clean em
@@ -156,8 +190,8 @@ public class NodeDaoTest extends EmBindingBase {
 
         nodes = dao.getChildren(newParentId);
         boolean found = false;
-        for(HNode child: nodes) {
-            if("12".equals(child.name)){
+        for (HNode child : nodes) {
+            if ("12".equals(child.name)) {
                 found = true;
             }
 
