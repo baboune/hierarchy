@@ -16,10 +16,10 @@
  * Date: 1/13/11
  * Time: 2:26 PM
  */
-package com.ericsson.edible.fasttrack.dao;
+package com.ericsson.edible.hierarchy.dao;
 
-import com.ericsson.edible.fasttrack.TreeBuilder;
-import com.ericsson.edible.fasttrack.object.HNode;
+import com.ericsson.edible.hierarchy.TreeBuilder;
+import com.ericsson.edible.hierarchy.object.HNode;
 import org.junit.Test;
 
 import java.util.LinkedList;

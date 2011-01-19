@@ -9,7 +9,7 @@
         </provider>
 
         <!-- We must enumerate each entity in the persistence unit -->
-        <class>com.ericsson.edible.fasttrack.object.HNode</class>
+        <class>com.ericsson.edible.hierarchy.object.HNode</class>
 
         <properties>
             <property name="openjpa.ConnectionURL"

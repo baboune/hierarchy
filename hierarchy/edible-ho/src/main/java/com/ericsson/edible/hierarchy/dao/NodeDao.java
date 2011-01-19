@@ -16,12 +16,12 @@
  * Date: 2010-dec-25
  * Time: 23:12:48
  */
-package com.ericsson.edible.fasttrack.dao;
+package com.ericsson.edible.hierarchy.dao;
 
-import com.ericsson.edible.fasttrack.H;
-import com.ericsson.edible.fasttrack.TreeBuilder;
-import com.ericsson.edible.fasttrack.exception.InvalidTreeException;
-import com.ericsson.edible.fasttrack.object.HNode;
+import com.ericsson.edible.hierarchy.H;
+import com.ericsson.edible.hierarchy.TreeBuilder;
+import com.ericsson.edible.hierarchy.exception.InvalidTreeException;
+import com.ericsson.edible.hierarchy.object.HNode;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;

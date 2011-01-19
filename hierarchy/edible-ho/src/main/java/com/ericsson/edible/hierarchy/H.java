@@ -16,10 +16,10 @@
  * Date: 2010-dec-25
  * Time: 23:12:48
  */
-package com.ericsson.edible.fasttrack;
+package com.ericsson.edible.hierarchy;
 
-import com.ericsson.edible.fasttrack.exception.InvalidTreeException;
-import com.ericsson.edible.fasttrack.object.HNode;
+import com.ericsson.edible.hierarchy.exception.InvalidTreeException;
+import com.ericsson.edible.hierarchy.object.HNode;
 
 import java.util.List;
 

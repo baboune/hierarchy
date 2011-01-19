@@ -16,7 +16,7 @@
  * Date: 2010-dec-25
  * Time: 13:19:04
  */
-package com.ericsson.edible.fasttrack.object;
+package com.ericsson.edible.hierarchy.object;
 
 import org.apache.openjpa.persistence.jdbc.Index;
 

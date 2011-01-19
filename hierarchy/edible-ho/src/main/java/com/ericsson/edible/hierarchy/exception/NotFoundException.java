@@ -16,19 +16,15 @@
  * Date: 2010-dec-25
  * Time: 23:12:48
  */
-package com.ericsson.edible.fasttrack.exception;
+package com.ericsson.edible.hierarchy.exception;
 
 /**
- * A generic exception for all the data module errors.
+ * Class comments ...
  */
-public class DataException extends Exception {
+public class NotFoundException extends Exception {
 
-    public DataException(String msg){
+    public NotFoundException(String msg) {
         super(msg);
-    }
-
-    public DataException(String msg, Throwable t){
-        super(msg, t);
     }
 
 }

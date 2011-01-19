@@ -15,7 +15,7 @@
      <persistence-unit name="keyservice" transaction-type="JTA">
         <provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
         <jta-data-source>jdbc/prototype</jta-data-source>
-         <class>com.ericsson.edible.fasttrack.object.HNode</class>
+         <class>com.ericsson.edible.hierarchy.object.HNode</class>
         <properties>
             <property name="openjpa.Log" value="SQL=INFO"/>
             <property name="openjpa.jdbc.SynchronizeMappings"

@@ -16,9 +16,9 @@
  * Date: 1/13/11
  * Time: 2:18 PM
  */
-package com.ericsson.edible.fasttrack;
+package com.ericsson.edible.hierarchy;
 
-import com.ericsson.edible.fasttrack.object.HNode;
+import com.ericsson.edible.hierarchy.object.HNode;
 
 import java.util.List;
 

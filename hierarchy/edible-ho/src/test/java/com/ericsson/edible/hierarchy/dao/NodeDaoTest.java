@@ -15,10 +15,10 @@
  * User: lmcnise
  * Date: 2010-mar-09
  */
-package com.ericsson.edible.fasttrack.dao;
+package com.ericsson.edible.hierarchy.dao;
 
-import com.ericsson.edible.fasttrack.TreeBuilder;
-import com.ericsson.edible.fasttrack.object.HNode;
+import com.ericsson.edible.hierarchy.TreeBuilder;
+import com.ericsson.edible.hierarchy.object.HNode;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -145,7 +145,6 @@ public class NodeDaoTest extends EmBindingBase {
 
         // move 12 to 11
         long idToMove = nodes.get(0).id;
-        HNode nodeToMove = nodes.get(0);
         long newParentId = nodesToMoveTo.get(0).id;
 
         beginTx();

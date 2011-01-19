@@ -15,7 +15,7 @@
  * Date: 13/01/11
  * Time: 21:54
  */
-package com.ericsson.edible.fasttrack.exception;
+package com.ericsson.edible.hierarchy.exception;
 
 /**
  *
